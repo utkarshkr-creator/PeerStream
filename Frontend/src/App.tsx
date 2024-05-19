@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { Home } from './components/Home'
-import { Room } from './components/Room'
+import { EndCall } from './components/EndCall'
 
 function App() {
 
@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/room' element={<Room />} />
+          <Route path='endcall' element={<EndCall />} />
         </Routes>
       </BrowserRouter>
     </>

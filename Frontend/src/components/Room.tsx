@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
+import { Socket, io } from "socket.io-client";
 
 const URL = "ws://localhost:8080"
 
@@ -7,9 +8,16 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const [lobby, setLobby] = useState(true);
+  //@ts-ignore
   const [senderPc, setSenderPc] = useState<null | RTCPeerConnection>(null);
+
+  //@ts-ignore
   const [receiverPc, setReceiverPc] = useState<null | RTCPeerConnection>(null);
   const [receiverName, setReceiverName] = useState<null | string>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
+
+  const navigate = useNavigate();
   useEffect(() => {
     if (localVideoRef.current) {
       if (localVideo && localAudio) {
@@ -22,6 +30,7 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
   useEffect(() => {
     try {
       const socket = io(URL);
+      setSocket(socket);
       socket.emit('user-connected', { name: name });
       socket.on('send-offer', async ({ roomId }: { roomId: string }) => {
         setLobby(false);
@@ -111,8 +120,8 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
 
       });
       socket.on("answer", ({ roomId, sdp, name: rname }: { roomId: string, sdp: any, name: string }) => {
-        console.log("rname", rname)
         setReceiverName(rname);
+        setRoomId(roomId);
         setSenderPc(pc => {
           pc?.setRemoteDescription(sdp);
           return pc;
@@ -122,7 +131,11 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
       socket.on("lobby", () => {
         setLobby(true);
       })
-
+      socket.on("end-call", async () => {
+        socket.disconnect();
+        receiverPc?.close();
+        navigate('/endcall');
+      })
       socket.on("add-ice-candidate", ({ candidate, type }) => {
         if (type == "sender") {
           setReceiverPc(pc => {
@@ -141,8 +154,17 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
     }
   }, [name])
 
+  function handleEndCall() {
+    if (!socket) return;
+    socket.emit("end-call", { roomId: roomId, socketId: socket.id })
+    senderPc?.close();
+    socket.disconnect();
+    navigate('/endcall')
+
+  }
+
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100">
+    <div className="h-screen flex flex-col justify-center items-center bg-gray-100">
       <div className="flex justify-center items-center w-4/5 mx-auto bg-white shadow-lg rounded-lg">
         <div className="w-1/2 p-4">
           <div className="text-center text-lg font-semibold mb-4">{name}</div>
@@ -172,6 +194,12 @@ export const Room = ({ name, localVideo, localAudio }: { name: string, localVide
           )}
         </div>
       </div>
+      <button
+        className="mt-4 px-4 py-2 bg-red-600 text-white font-bold rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50"
+        onClick={handleEndCall}
+      >
+        Leave Call
+      </button>
     </div>
   );
 }

@@ -36,6 +36,14 @@ export class RoomManager {
       roomId
     })
   }
+  onEndCall(socketId: string, roomId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    const receiverUser = room.user1.socket.id === socketId ? room.user2 : room.user1;
+
+    receiverUser.socket.emit("end-call");
+  }
   onAnswer(roomId: string, sdp: string, senderSocketid: string) {
     const room = this.rooms.get(roomId);
     if (!room) return;
@@ -55,4 +63,5 @@ export class RoomManager {
     const receiverUser = room.user1.socket.id === senderSocketid ? room.user2 : room.user1;
     receiverUser?.socket.emit("add-ice-candidate", ({ candidate, type }));
   }
+
 }

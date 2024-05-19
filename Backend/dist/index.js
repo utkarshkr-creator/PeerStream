@@ -15,6 +15,6 @@ io.on('connection', (socket) => {
         userManager.addUser(socket, name);
     });
     socket.on("disconnect", () => {
-        userManager.removeUser(socket.id);
+        console.log("disconnected");
     });
 });

@@ -11,7 +11,6 @@ const userManager = new UserManager();
 io.on('connection', (socket: Socket) => {
   socket.on('user-connected', (data) => {
     const { name } = data;
-    // Add the user to the user manager
     userManager.addUser(socket, name);
   });
   socket.on("disconnect", () => {

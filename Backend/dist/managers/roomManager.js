@@ -30,6 +30,14 @@ class RoomManager {
             roomId
         });
     }
+    onEndCall(socketId, roomId) {
+        console.log("room manager end call");
+        const room = this.rooms.get(roomId);
+        if (!room)
+            return;
+        const receiverUser = room.user1.socket.id === socketId ? room.user2 : room.user1;
+        receiverUser.socket.emit("end-call");
+    }
     onAnswer(roomId, sdp, senderSocketid) {
         const room = this.rooms.get(roomId);
         if (!room)

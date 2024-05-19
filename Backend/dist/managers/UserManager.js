@@ -18,10 +18,6 @@ class UserManager {
         this.clearQueue();
         this.initHandlers(socket);
     }
-    removeUser(socketId) {
-        this.users = this.users.filter(x => x.socket.id !== socketId);
-        this.queue = this.queue.filter(x => x === socketId);
-    }
     clearQueue() {
         if (this.queue.length < 2) {
             return;
@@ -47,6 +43,12 @@ class UserManager {
         });
         socket.on("add-ice-candidate", ({ candidate, roomId, type }) => {
             this.roomManager.onIceCandidates(roomId, socket.id, candidate, type);
+        });
+        socket.on("end-call", ({ roomId, socketId }) => {
+            console.log("callll end call in userManager");
+            this.users = this.users.filter(x => x.socket.id !== socketId);
+            this.queue = this.queue.filter(x => x !== socketId);
+            this.roomManager.onEndCall(socketId, roomId);
         });
     }
 }
