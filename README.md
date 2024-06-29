@@ -73,10 +73,12 @@ http://localhost:5173
   - WebRTC: For peer-to-peer video and audio communication
 
 ## Images
-- Home Page
+### Home Page
+![file (1)](https://github.com/utkarshkr-creator/PeerStream/assets/66742842/b0cbe12d-8b29-4e66-b750-6cd3f3964617)
 
-  <img width="1445" alt="Screenshot 2024-05-19 at 7 21 18 PM" src="https://github.com/utkarshkr-creator/Video-chat-app/assets/66742842/20516a88-babc-4243-8738-df8e58cc2d41">
+### Live Video call
 
-- Live Video call
-<img width="1459" alt="Screenshot 2024-05-19 at 7 21 56 PM" src="https://github.com/utkarshkr-creator/Video-chat-app/assets/66742842/1635d0a8-2a6b-4868-8f76-abe7bf260db1">
+![file](https://github.com/utkarshkr-creator/PeerStream/assets/66742842/f8e275f0-1caf-42e5-ad35-6e3c82362831)
+
+
 
